@@ -4,10 +4,15 @@ import cgi, cgitb
 import os, json
 import templates
 import secret
+import sys
 
+cgitb.enable()
 form = cgi.FieldStorage()
 username = form.getvalue('username')
 password = form.getvalue('password')
+
+
+
 
 if username == secret.username and password == secret.password:
 	print("Content-type:text/html\r\n\r\n")
@@ -21,6 +26,7 @@ if username == secret.username and password == secret.password:
 	print(templates.secret_page(username, password))
 	print("</html>")
 
+
 else:
 	
 	print("Content-type:text/html\r\n\r\n")
@@ -30,8 +36,14 @@ else:
 	print("</head>")
 	print("<body>")
 	print("<p>Hello World cmput 404</p>")
-
-	print("<p>Username %s password %s</p>" % (username, password))
+	
+	posted_bytes = os.environ.get("CONTENT_LENGTH", 0)
+	if posted_bytes:
+    		posted = sys.stdin.read(int(posted_bytes))
+    		print(f"<p> POSTED: <pre>")
+    		for line in posted.splitlines():
+    	    		print(line)
+    		print("</pre></p>")
 
 
 	print(templates.login_page())
@@ -42,4 +54,5 @@ else:
 	
 	print("</body>")
 	print("</html>")
+
 
